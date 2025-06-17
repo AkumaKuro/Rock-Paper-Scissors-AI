@@ -129,7 +129,16 @@ def get_opponent_move():
 def entropy(moves):
     counts = collections.Counter(moves)
     total = sum(counts.values())
-    return -sum((count / total) * math.log2(count / total) for count in counts.values()) if total > 0 else 0
+    if total > 0:
+        results = []
+        for count in counts.values():
+            ratio = count / total
+            result = ratio * math.log2(ratio)
+            results.append(result)
+
+        return -sum(results)
+    else:
+        return 0
 
 
 # --- Main Loop ---
@@ -138,7 +147,7 @@ def play_rps(rounds=100):
     raw_opponent_moves = []
     base_strategies = [FrequencyCounter(), FirstOrderMarkov(), MirrorStrategy()]
     fuzzy = FuzzyVotingStrategy(base_strategies)
-    strategies = base_strategies + [fuzzy]
+    strategies = base_strategies.append(fuzzy)
     bandit = BanditController(strategies)
 
     entropy_threshold = 1.5
@@ -187,7 +196,8 @@ def play_rps(rounds=100):
         else:
             ai_wins += 1
         ratio = ai_wins / plays
-        print(f"You: {opponent_move}, AI: {my_move}, {'You win!' if player_won else 'AI wins!'} Ratio: {ratio*100}%")
+        message = 'You win!' if player_won else 'AI wins!'
+        print(f"You: {opponent_move}, AI: {my_move}, {message} Ratio: {ratio*100}%")
 
 
 if __name__ == "__main__":
