@@ -147,7 +147,7 @@ def play_rps(rounds=100):
     raw_opponent_moves = []
     base_strategies = [FrequencyCounter(), FirstOrderMarkov(), MirrorStrategy()]
     fuzzy = FuzzyVotingStrategy(base_strategies)
-    strategies = base_strategies.append(fuzzy)
+    strategies = base_strategies + [fuzzy]
     bandit = BanditController(strategies)
 
     entropy_threshold = 1.5
